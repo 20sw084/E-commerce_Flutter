@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -79,8 +78,7 @@ class _AddAttributeAndOptionState extends State<AddAttributeAndOption> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    log(globals.token);
+    // log(globals.token);
     super.initState();
     getDropdownData();
     futureAttrList = getAttributesFromApi(token: globals.token);
@@ -161,225 +159,7 @@ class _AddAttributeAndOptionState extends State<AddAttributeAndOption> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                              // builder: null,
-                                              builder: (context, setState) {
-                                            return AlertDialog(
-                                              title: const Text('Add Attribute'),
-                                              content: SingleChildScrollView(
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: TextField(
-                                                        controller:
-                                                            nameAttributeTextEditingController,
-                                                        decoration:
-                                                            const InputDecoration(
-                                                                border:
-                                                                    InputBorder.none,
-                                                                labelText: 'Name',
-                                                                hintText:
-                                                                    'Attribute Name'),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Container(
-                                                        height: 50.0,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors.grey),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.0)),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                  left: 10.0,
-                                                                  right: 10.0),
-                                                          child: DropdownButton(
-                                                              underline: Container(),
-                                                              value: selectedItem,
-                                                              icon: const Expanded(
-                                                                child: Align(
-                                                                  alignment:
-                                                                      FractionalOffset
-                                                                          .centerRight,
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .arrow_drop_down,
-                                                                    color:
-                                                                        Colors.grey,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              items: items
-                                                                  .map((String item) {
-                                                                return DropdownMenuItem(
-                                                                    value: item,
-                                                                    child: Text(
-                                                                      item.toString(),
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            16.0,
-                                                                        color: Colors
-                                                                            .grey,
-                                                                      ),
-                                                                    ));
-                                                              }).toList(),
-                                                              onChanged: (newValue) {
-                                                                setState(() {
-                                                                  selectedItem =
-                                                                      newValue!
-                                                                          as String?;
-                                                                });
-                                                              }),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0
-                                                          ),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                  horizontal: 15.0,
-                                                                  vertical: 2.0),
-                                                          child: TextButton(
-                                                            onPressed:() async {
-                                                            dynamic response =
-                                                            await createAttribute(
-                                                              token: globals.token,
-                                                              name:
-                                                              nameAttributeTextEditingController
-                                                                  .text,
-                                                              type: selectedItem
-                                                                  .toString(),
-                                                            ).whenComplete(() =>
-                                                            isLoading = false);
-                                                            if (!isLoading) {
-                                                              context.loaderOverlay
-                                                                  .hide();
-                                                            }
-                                                            if (response != null) {
-                                                              setState(() {
-                                                                futureAttrList = getAttributesFromApi(token: globals.token);
-                                                              });
-                                                              final snackBar = SnackBar(
-                                                                /// need to set following properties for best effect of awesome_snackbar_content
-                                                                elevation: 0,
-                                                                duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                    3000),
-                                                                behavior:
-                                                                SnackBarBehavior
-                                                                    .floating,
-                                                                backgroundColor:
-                                                                Colors.transparent,
-                                                                content:
-                                                                AwesomeSnackbarContent(
-                                                                  title: 'Success!',
-                                                                  message: response
-                                                                      .toString(),
-
-                                                                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                                                                  contentType:
-                                                                  ContentType
-                                                                      .success,
-                                                                ),
-                                                              );
-                                                              if (!mounted) return;
-                                                              ScaffoldMessenger.of(
-                                                                  context)
-                                                                ..hideCurrentSnackBar()
-                                                                ..showSnackBar(
-                                                                    snackBar);
-                                                              Navigator.pop(
-                                                                context,
-                                                              );
-                                                            } else {
-                                                              final snackBar = SnackBar(
-                                                                /// need to set following properties for best effect of awesome_snackbar_content
-                                                                elevation: 0,
-                                                                /*duration: const Duration(
-                                                milliseconds: 3000),*/
-                                                                behavior:
-                                                                SnackBarBehavior
-                                                                    .floating,
-                                                                backgroundColor:
-                                                                Colors.transparent,
-                                                                content:
-                                                                AwesomeSnackbarContent(
-                                                                  title: 'Error!',
-                                                                  message:
-                                                                  "Something went wrong",
-                                                                  contentType:
-                                                                  ContentType
-                                                                      .failure,
-                                                                ),
-                                                              );
-                                                              if (!mounted) return;
-                                                              ScaffoldMessenger.of(
-                                                                  context)
-                                                                ..hideCurrentSnackBar()
-                                                                ..showSnackBar(
-                                                                    snackBar);
-                                                            }
-                                                          },
-                                                            style: ButtonStyle(
-                                                              padding:
-                                                              MaterialStateProperty
-                                                                  .all(
-                                                                  const EdgeInsets
-                                                                      .all(0)),
-                                                              elevation:
-                                                              MaterialStateProperty
-                                                                  .all(1.0),
-                                                              shape: MaterialStateProperty.all(
-                                                                  RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                          8))),
-                                                              backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all(
-                                                                const Color(0xffA00000),
-                                                              ),
-                                                              shadowColor:
-                                                              MaterialStateProperty
-                                                                  .all(Theme.of(
-                                                                  context)
-                                                                  .colorScheme
-                                                                  .onSurface),
-                                                            ),
-                                                            child: const Text(
-                                                            'Save',
-                                                            style: TextStyle(
-                                                              color: Colors.white,
-                                                            ),
-                                                          ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              //actions: const <Widget>[],
-                                            );
-                                          });
-                                        });
+                                    openAddAttrDialog();
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -683,425 +463,7 @@ class _AddAttributeAndOptionState extends State<AddAttributeAndOption> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                              // builder: null,
-                                              builder: (context, setState) {
-                                            return AlertDialog(
-                                              title: const Text('Add Option'),
-                                              content: SingleChildScrollView(
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Container(
-                                                        height: 50.0,
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors.grey),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.0)),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                  left: 10.0,
-                                                                  right: 10.0),
-                                                          child: DropdownButton(
-                                                              underline: Container(),
-                                                              value: selectedItem,
-                                                              icon: const Expanded(
-                                                                child: Align(
-                                                                  alignment:
-                                                                      FractionalOffset
-                                                                          .centerRight,
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .arrow_drop_down,
-                                                                    color:
-                                                                        Colors.grey,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              items: items
-                                                                  .map((String item) {
-                                                                return DropdownMenuItem(
-                                                                    value: item,
-                                                                    child: Text(
-                                                                      item.toString(),
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            16.0,
-                                                                        color: Colors
-                                                                            .grey,
-                                                                      ),
-                                                                    ));
-                                                              }).toList(),
-                                                              onChanged: (newValue) {
-                                                                setState(() {
-                                                                  selectedItem =
-                                                                      newValue!
-                                                                          as String?;
-                                                                  if (selectedItem ==
-                                                                          "custom" ||
-                                                                      selectedItem ==
-                                                                          "size") {
-                                                                    setState(() {
-                                                                      showColor =
-                                                                          false;
-                                                                    });
-                                                                  } else if (selectedItem ==
-                                                                      "color") {
-                                                                    setState(() {
-                                                                      showColor =
-                                                                          true;
-                                                                    });
-                                                                  }
-                                                                });
-                                                              }),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                        flex: 2,
-                                                        child: Container(
-                                                            height: 50.0,
-                                                            decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                    color:
-                                                                        Colors.grey),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.0)),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 10.0,
-                                                                      right: 10.0),
-                                                              child: DropdownButton<
-                                                                  String>(
-                                                                value:
-                                                                    selectedAttributeId,
-                                                                icon: const Expanded(
-                                                                  child: Align(
-                                                                    alignment:
-                                                                        FractionalOffset
-                                                                            .centerRight,
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .arrow_drop_down,
-                                                                      color:
-                                                                          Colors.grey,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                onChanged: (value) =>
-                                                                    setState(() =>
-                                                                        selectedAttributeId =
-                                                                            value
-                                                                                .toString()),
-                                                                iconEnabledColor: red,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(10),
-                                                                isExpanded: true,
-                                                                underline:
-                                                                    const SizedBox
-                                                                        .shrink(),
-                                                                style: TextStyle(
-                                                                    color: Colors.grey
-                                                                        .shade700),
-                                                                items: attrDdList
-                                                                    .map((val) => DropdownMenuItem<
-                                                                            String>(
-                                                                        value: val[
-                                                                                "id"]
-                                                                            .toString(),
-                                                                        child: Text(
-                                                                            val["name"] ??
-                                                                                "")))
-                                                                    .toList(),
-                                                              ),
-                                                            ))),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: SizedBox(
-                                                        height: 50.0,
-                                                        child: TextFormField(
-                                                          validator: (val) => val ==
-                                                                      null ||
-                                                                  val.isEmpty
-                                                              ? "This field is required"
-                                                              : null,
-                                                          onChanged: (val) =>
-                                                              attributeOptionName =
-                                                                  val,
-                                                          decoration: InputDecoration(
-                                                            border:
-                                                                OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(10.0),
-                                                            ),
-                                                            hintText:
-                                                                'Enter Name Here',
-                                                            labelText:
-                                                                'Enter Name Here',
-                                                            labelStyle:
-                                                                const TextStyle(
-                                                              color: Colors.grey,
-                                                            ),
-                                                            hintStyle:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.transparent,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Visibility(
-                                                      visible: showColor,
-                                                      child: Expanded(
-                                                        flex: 3,
-                                                        child: SizedBox(
-                                                          height: 50.0,
-                                                          child: TextFormField(
-                                                            controller:
-                                                                colorHexTextController,
-                                                            readOnly: true,
-                                                            onTap: () {
-                                                              showDialog(
-                                                                builder: (context) =>
-                                                                    AlertDialog(
-                                                                  title: const Text(
-                                                                      'Pick a color!'),
-                                                                  content:
-                                                                      SingleChildScrollView(
-                                                                    child:
-                                                                        ColorPicker(
-                                                                      pickerColor:
-                                                                          pickerColors,
-                                                                      onColorChanged:
-                                                                          changeColor,
-                                                                    ),
-                                                                  ),
-                                                                  actions: <Widget>[
-                                                                    ElevatedButton(
-                                                                      child: const Text(
-                                                                          'Got it'),
-                                                                      onPressed: () {
-                                                                        setState(() =>
-                                                                            currentColors =
-                                                                                pickerColors);
-                                                                        hex =
-                                                                            '#${currentColors.value.toRadixString(16)}';
-                                                                        colorHexTextController
-                                                                                .text =
-                                                                            hex.toString();
-                                                                        Navigator.of(
-                                                                                context)
-                                                                            .pop();
-                                                                      },
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                context: context,
-                                                              );
-                                                            },
-                                                            validator: (val) => val ==
-                                                                        null ||
-                                                                    val.isEmpty
-                                                                ? "This field is required"
-                                                                : null,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.0),
-                                                              ),
-                                                              hintText:
-                                                                  'Select Color Here',
-                                                              labelText:
-                                                                  'Select Color Here',
-                                                              labelStyle:
-                                                                  const TextStyle(
-                                                                color: Colors.grey,
-                                                              ),
-                                                              hintStyle:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .transparent,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 20.0,
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  10.0),
-                                                        ),
-                                                        child: TextButton(
-                                                          onPressed: () async {
-                                                            isLoading = true;
-                                                            context.loaderOverlay
-                                                                .show();
-                                                            dynamic response =
-                                                                await createOptions(
-                                                                        token: globals
-                                                                            .token,
-                                                                        name:
-                                                                            attributeOptionName,
-                                                                        attrId:
-                                                                            selectedAttributeId,
-                                                                        media: hex)
-                                                                    .whenComplete(() =>
-                                                                        isLoading =
-                                                                            false);
-                                                            if (isLoading == false) {
-                                                              context.loaderOverlay
-                                                                  .hide();
-                                                            }
-                                                            if (response != null) {
-                                                              final snackBar =
-                                                                  SnackBar(
-                                                                /// need to set following properties for best effect of awesome_snackbar_content
-                                                                elevation: 0,
-                                                                duration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            3000),
-                                                                behavior:
-                                                                    SnackBarBehavior
-                                                                        .floating,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                content:
-                                                                    AwesomeSnackbarContent(
-                                                                  title: 'Success!',
-                                                                  message: response,
-
-                                                                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                                                                  contentType:
-                                                                      ContentType
-                                                                          .success,
-                                                                ),
-                                                              );
-                                                              Navigator.pop(context);
-                                                              if (!mounted) {
-                                                                return;
-                                                              }
-                                                              ScaffoldMessenger.of(
-                                                                  context)
-                                                                ..hideCurrentSnackBar()
-                                                                ..showSnackBar(
-                                                                    snackBar);
-                                                              setState(() {
-                                                                futureAttrOptionsList =
-                                                                    getAllOptions(
-                                                                        token: globals
-                                                                            .token);
-                                                              });
-                                                            } else {
-                                                              final snackBar =
-                                                                  SnackBar(
-                                                                /// need to set following properties for best effect of awesome_snackbar_content
-                                                                elevation: 0,
-                                                                duration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            3000),
-                                                                behavior:
-                                                                    SnackBarBehavior
-                                                                        .floating,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .transparent,
-                                                                content:
-                                                                    AwesomeSnackbarContent(
-                                                                  title: 'Error!',
-                                                                  message:
-                                                                      "Something went wrong",
-
-                                                                  /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                                                                  contentType:
-                                                                      ContentType
-                                                                          .failure,
-                                                                ),
-                                                              );
-                                                              Navigator.pop(context);
-                                                              if (!mounted) {
-                                                                return;
-                                                              }
-                                                              ScaffoldMessenger.of(
-                                                                  context)
-                                                                ..hideCurrentSnackBar()
-                                                                ..showSnackBar(
-                                                                    snackBar);
-                                                            }
-
-                                                            attrNameTextController
-                                                                .clear();
-                                                          },
-                                                          style: ButtonStyle(
-                                                            padding:
-                                                                MaterialStateProperty
-                                                                    .all(
-                                                                        const EdgeInsets
-                                                                            .all(0)),
-                                                            elevation:
-                                                                MaterialStateProperty
-                                                                    .all(1.0),
-                                                            shape: MaterialStateProperty.all(
-                                                                RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                8))),
-                                                            backgroundColor:
-                                                                MaterialStateProperty
-                                                                    .all(
-                                                              const Color(0xffA00000),
-                                                            ),
-                                                            shadowColor:
-                                                                MaterialStateProperty
-                                                                    .all(Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .onSurface),
-                                                          ),
-                                                          child: const Text(
-                                                            'Save',
-                                                            style: TextStyle(
-                                                                color: Colors.white),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              // actions: const <Widget>[],
-                                            );
-                                          });
-                                        });
+                                    openAddAttrOptionDialog();
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -1415,12 +777,230 @@ class _AddAttributeAndOptionState extends State<AddAttributeAndOption> {
     );
   }
 
+  void openAddAttrDialog(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text('Add Attribute'),
+                  content: SingleChildScrollView(
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            controller:
+                            nameAttributeTextEditingController,
+                            decoration:
+                            const InputDecoration(
+                                border:
+                                InputBorder.none,
+                                labelText: 'Name',
+                                hintText:
+                                'Attribute Name'),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey),
+                                borderRadius:
+                                BorderRadius.circular(
+                                    10.0)),
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0),
+                              child: DropdownButton(
+                                  underline: Container(),
+                                  value: selectedItem,
+                                  icon: const Expanded(
+                                    child: Align(
+                                      alignment:
+                                      FractionalOffset
+                                          .centerRight,
+                                      child: Icon(
+                                        Icons
+                                            .arrow_drop_down,
+                                        color:
+                                        Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  items: items
+                                      .map((String item) {
+                                    return DropdownMenuItem(
+                                        value: item,
+                                        child: Text(
+                                          item.toString(),
+                                          style:
+                                          const TextStyle(
+                                            fontSize:
+                                            16.0,
+                                            color: Colors
+                                                .grey,
+                                          ),
+                                        ));
+                                  }).toList(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedItem =
+                                      newValue!
+                                      as String?;
+                                    });
+                                  }),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                              BorderRadius.circular(
+                                  10.0
+                              ),
+                            ),
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.symmetric(
+                                  horizontal: 15.0,
+                                  vertical: 2.0),
+                              child: TextButton(
+                                onPressed:() async {
+                                  dynamic response =
+                                  await createAttribute(
+                                    token: globals.token,
+                                    name:
+                                    nameAttributeTextEditingController
+                                        .text,
+                                    type: selectedItem
+                                        .toString(),
+                                  ).whenComplete(() =>
+                                  isLoading = false);
+                                  if (!isLoading) {
+                                    context.loaderOverlay
+                                        .hide();
+                                  }
+                                  if (response != null) {
+                                    final snackBar = SnackBar(
+                                      /// need to set following properties for best effect of awesome_snackbar_content
+                                      elevation: 0,
+                                      duration:
+                                      const Duration(
+                                          milliseconds:
+                                          3000),
+                                      behavior:
+                                      SnackBarBehavior
+                                          .floating,
+                                      backgroundColor:
+                                      Colors.transparent,
+                                      content:
+                                      AwesomeSnackbarContent(
+                                        title: 'Success!',
+                                        message: response
+                                            .toString(),
+
+                                        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                                        contentType:
+                                        ContentType
+                                            .success,
+                                      ),
+                                    );
+                                    if (!mounted) return;
+                                    ScaffoldMessenger.of(
+                                        context)
+                                      ..hideCurrentSnackBar()
+                                      ..showSnackBar(
+                                          snackBar);
+                                    Navigator.pop(
+                                      context,
+                                    );
+                                  } else {
+                                    final snackBar = SnackBar(
+                                      /// need to set following properties for best effect of awesome_snackbar_content
+                                      elevation: 0,
+                                      behavior:
+                                      SnackBarBehavior
+                                          .floating,
+                                      backgroundColor:
+                                      Colors.transparent,
+                                      content:
+                                      AwesomeSnackbarContent(
+                                        title: 'Error!',
+                                        message:
+                                        "Something went wrong",
+                                        contentType:
+                                        ContentType
+                                            .failure,
+                                      ),
+                                    );
+                                    if (!mounted) return;
+                                    ScaffoldMessenger.of(
+                                        context)
+                                      ..hideCurrentSnackBar()
+                                      ..showSnackBar(
+                                          snackBar);
+                                  }
+                                  setState(() {
+                                    futureAttrList = getAttributesFromApi(token: globals.token);
+                                  });
+                                },
+                                style: ButtonStyle(
+                                  padding:
+                                  MaterialStateProperty
+                                      .all(
+                                      const EdgeInsets
+                                          .all(0)),
+                                  elevation:
+                                  MaterialStateProperty
+                                      .all(1.0),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius
+                                              .circular(
+                                              8))),
+                                  backgroundColor:
+                                  MaterialStateProperty
+                                      .all(
+                                    const Color(0xffA00000),
+                                  ),
+                                  shadowColor:
+                                  MaterialStateProperty
+                                      .all(Theme.of(
+                                      context)
+                                      .colorScheme
+                                      .onSurface),
+                                ),
+                                child: const Text(
+                                  'Save',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //actions: const <Widget>[],
+                );
+              });
+        });
+  }
+
   void openAttrEditDialog({required attrId}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(
-              // builder: null,
               builder: (context, setState) {
             return AlertDialog(
               title: const Text('Edit Attribute'),
@@ -1587,6 +1167,426 @@ class _AddAttributeAndOptionState extends State<AddAttributeAndOption> {
               //actions: const <Widget>[],
             );
           });
+        });
+  }
+
+  void openAddAttrOptionDialog(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            // builder: null,
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: const Text('Add Option'),
+                  content: SingleChildScrollView(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Container(
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey),
+                                borderRadius:
+                                BorderRadius.circular(
+                                    10.0)),
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.only(
+                                  left: 10.0,
+                                  right: 10.0),
+                              child: DropdownButton(
+                                  underline: Container(),
+                                  value: selectedItem,
+                                  icon: const Expanded(
+                                    child: Align(
+                                      alignment:
+                                      FractionalOffset
+                                          .centerRight,
+                                      child: Icon(
+                                        Icons
+                                            .arrow_drop_down,
+                                        color:
+                                        Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                  items: items
+                                      .map((String item) {
+                                    return DropdownMenuItem(
+                                        value: item,
+                                        child: Text(
+                                          item.toString(),
+                                          style:
+                                          const TextStyle(
+                                            fontSize:
+                                            16.0,
+                                            color: Colors
+                                                .grey,
+                                          ),
+                                        ));
+                                  }).toList(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedItem =
+                                      newValue!
+                                      as String?;
+                                      if (selectedItem ==
+                                          "custom" ||
+                                          selectedItem ==
+                                              "size") {
+                                        setState(() {
+                                          showColor =
+                                          false;
+                                        });
+                                      } else if (selectedItem ==
+                                          "color") {
+                                        setState(() {
+                                          showColor =
+                                          true;
+                                        });
+                                      }
+                                    });
+                                  }),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Container(
+                                height: 50.0,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color:
+                                        Colors.grey),
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                        10.0)),
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets
+                                      .only(
+                                      left: 10.0,
+                                      right: 10.0),
+                                  child: DropdownButton<
+                                      String>(
+                                    value:
+                                    selectedAttributeId,
+                                    icon: const Expanded(
+                                      child: Align(
+                                        alignment:
+                                        FractionalOffset
+                                            .centerRight,
+                                        child: Icon(
+                                          Icons
+                                              .arrow_drop_down,
+                                          color:
+                                          Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    onChanged: (value) =>
+                                        setState(() =>
+                                        selectedAttributeId =
+                                            value
+                                                .toString()),
+                                    iconEnabledColor: red,
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(10),
+                                    isExpanded: true,
+                                    underline:
+                                    const SizedBox
+                                        .shrink(),
+                                    style: TextStyle(
+                                        color: Colors.grey
+                                            .shade700),
+                                    items: attrDdList
+                                        .map((val) => DropdownMenuItem<
+                                        String>(
+                                        value: val[
+                                        "id"]
+                                            .toString(),
+                                        child: Text(
+                                            val["name"] ??
+                                                "")))
+                                        .toList(),
+                                  ),
+                                ))),
+                        Expanded(
+                          flex: 3,
+                          child: SizedBox(
+                            height: 50.0,
+                            child: TextFormField(
+                              validator: (val) => val ==
+                                  null ||
+                                  val.isEmpty
+                                  ? "This field is required"
+                                  : null,
+                              onChanged: (val) =>
+                              attributeOptionName =
+                                  val,
+                              decoration: InputDecoration(
+                                border:
+                                OutlineInputBorder(
+                                  borderRadius:
+                                  BorderRadius
+                                      .circular(10.0),
+                                ),
+                                hintText:
+                                'Enter Name Here',
+                                labelText:
+                                'Enter Name Here',
+                                labelStyle:
+                                const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                                hintStyle:
+                                const TextStyle(
+                                  color:
+                                  Colors.transparent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                          visible: showColor,
+                          child: Expanded(
+                            flex: 3,
+                            child: SizedBox(
+                              height: 50.0,
+                              child: TextFormField(
+                                controller:
+                                colorHexTextController,
+                                readOnly: true,
+                                onTap: () {
+                                  showDialog(
+                                    builder: (context) =>
+                                        AlertDialog(
+                                          title: const Text(
+                                              'Pick a color!'),
+                                          content:
+                                          SingleChildScrollView(
+                                            child:
+                                            ColorPicker(
+                                              pickerColor:
+                                              pickerColors,
+                                              onColorChanged:
+                                              changeColor,
+                                            ),
+                                          ),
+                                          actions: <Widget>[
+                                            ElevatedButton(
+                                              child: const Text(
+                                                  'Got it'),
+                                              onPressed: () {
+                                                setState(() =>
+                                                currentColors =
+                                                    pickerColors);
+                                                hex =
+                                                '#${currentColors.value.toRadixString(16)}';
+                                                colorHexTextController
+                                                    .text =
+                                                    hex.toString();
+                                                Navigator.of(
+                                                    context)
+                                                    .pop();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                    context: context,
+                                  );
+                                },
+                                validator: (val) => val ==
+                                    null ||
+                                    val.isEmpty
+                                    ? "This field is required"
+                                    : null,
+                                decoration:
+                                InputDecoration(
+                                  border:
+                                  OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                        10.0),
+                                  ),
+                                  hintText:
+                                  'Select Color Here',
+                                  labelText:
+                                  'Select Color Here',
+                                  labelStyle:
+                                  const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                  hintStyle:
+                                  const TextStyle(
+                                    color: Colors
+                                        .transparent,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 20.0,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                              BorderRadius.circular(
+                                  10.0),
+                            ),
+                            child: TextButton(
+                              onPressed: () async {
+                                isLoading = true;
+                                context.loaderOverlay
+                                    .show();
+                                dynamic response =
+                                await createOptions(
+                                    token: globals
+                                        .token,
+                                    name:
+                                    attributeOptionName,
+                                    attrId:
+                                    selectedAttributeId,
+                                    media: hex)
+                                    .whenComplete(() =>
+                                isLoading =
+                                false);
+                                if (isLoading == false) {
+                                  context.loaderOverlay
+                                      .hide();
+                                }
+                                if (response != null) {
+                                  final snackBar =
+                                  SnackBar(
+                                    /// need to set following properties for best effect of awesome_snackbar_content
+                                    elevation: 0,
+                                    duration:
+                                    const Duration(
+                                        milliseconds:
+                                        3000),
+                                    behavior:
+                                    SnackBarBehavior
+                                        .floating,
+                                    backgroundColor:
+                                    Colors
+                                        .transparent,
+                                    content:
+                                    AwesomeSnackbarContent(
+                                      title: 'Success!',
+                                      message: response,
+
+                                      /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                                      contentType:
+                                      ContentType
+                                          .success,
+                                    ),
+                                  );
+                                  setState(() {
+                                    futureAttrOptionsList =
+                                        getAllOptions(
+                                            token: globals
+                                                .token);
+                                    Navigator.pop(context);
+                                    if (!mounted) {
+                                      return;
+                                    }
+                                    ScaffoldMessenger.of(
+                                        context)
+                                      ..hideCurrentSnackBar()
+                                      ..showSnackBar(
+                                          snackBar);
+                                  });
+                                } else {
+                                  final snackBar =
+                                  SnackBar(
+                                    /// need to set following properties for best effect of awesome_snackbar_content
+                                    elevation: 0,
+                                    duration:
+                                    const Duration(
+                                        milliseconds:
+                                        3000),
+                                    behavior:
+                                    SnackBarBehavior
+                                        .floating,
+                                    backgroundColor:
+                                    Colors
+                                        .transparent,
+                                    content:
+                                    AwesomeSnackbarContent(
+                                      title: 'Error!',
+                                      message:
+                                      "Something went wrong",
+                                      contentType:
+                                      ContentType
+                                          .failure,
+                                    ),
+                                  );
+                                  // Navigator.pop(context);
+                                  if (!mounted) {
+                                    return;
+                                  }
+                                  ScaffoldMessenger.of(
+                                      context)
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(
+                                        snackBar);
+                                }
+
+                                attrNameTextController
+                                    .clear();
+                              },
+                              style: ButtonStyle(
+                                padding:
+                                MaterialStateProperty
+                                    .all(
+                                    const EdgeInsets
+                                        .all(0)),
+                                elevation:
+                                MaterialStateProperty
+                                    .all(1.0),
+                                shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                        BorderRadius
+                                            .circular(
+                                            8))),
+                                backgroundColor:
+                                MaterialStateProperty
+                                    .all(
+                                  const Color(0xffA00000),
+                                ),
+                                shadowColor:
+                                MaterialStateProperty
+                                    .all(Theme.of(
+                                    context)
+                                    .colorScheme
+                                    .onSurface),
+                              ),
+                              child: const Text(
+                                'Save',
+                                style: TextStyle(
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // actions: const <Widget>[],
+                );
+              });
         });
   }
 
@@ -1862,185 +1862,11 @@ class _AddAttributeAndOptionState extends State<AddAttributeAndOption> {
                     ),
                   ],
                 ),
-                // Row(
-                //   children: <Widget>[
-                //     Expanded(
-                //       child: TextField(
-                //         controller:
-                //             nameAttributeTextEditingController,
-                //         decoration: InputDecoration(
-                //             border: InputBorder.none,
-                //             labelText: 'Name',
-                //             hintText:
-                //                 'Attribute Name'),
-                //       ),
-                //     ),
-                //     Expanded(
-                //       flex: 2,
-                //       child: Container(
-                //         height: 50.0,
-                //         decoration: BoxDecoration(
-                //             border: Border.all(
-                //                 color: Colors.grey),
-                //             borderRadius:
-                //                 BorderRadius.circular(
-                //                     10.0)),
-                //         child: Padding(
-                //           padding:
-                //               const EdgeInsets.only(
-                //                   left: 10.0,
-                //                   right: 10.0),
-                //           child: DropdownButton(
-                //               underline: Container(),
-                //               value: selectedItem,
-                //               icon: const Expanded(
-                //                 child: Align(
-                //                   alignment:
-                //                       FractionalOffset
-                //                           .centerRight,
-                //                   child: Icon(
-                //                     Icons
-                //                         .arrow_drop_down,
-                //                     color:
-                //                         Colors.grey,
-                //                   ),
-                //                 ),
-                //               ),
-                //               items: items
-                //                   .map((String item) {
-                //                 return DropdownMenuItem(
-                //                     value: item,
-                //                     child: Text(
-                //                       item.toString(),
-                //                       style:
-                //                           const TextStyle(
-                //                         fontSize:
-                //                             16.0,
-                //                         color: Colors
-                //                             .grey,
-                //                       ),
-                //                     ));
-                //               }).toList(),
-                //               onChanged: (newValue) {
-                //                 setState(() {
-                //                   selectedItem =
-                //                       newValue!
-                //                           as String?;
-                //                 });
-                //               }),
-                //         ),
-                //       ),
-                //     ),
-                //     Expanded(
-                //       child: GestureDetector(
-                //         onTap: () async {
-                //           dynamic response =
-                //               await createAttribute(
-                //             token: globals.token,
-                //             name:
-                //                 nameAttributeTextEditingController
-                //                     .text,
-                //             type: selectedItem
-                //                 .toString(),
-                //           ).whenComplete(() =>
-                //                   isLoading = false);
-                //           if (!isLoading) {
-                //             context.loaderOverlay
-                //                 .hide();
-                //           }
-                //           log("result: $response");
-                //           if (response != null) {
-                //             final snackBar = SnackBar(
-                //               /// need to set following properties for best effect of awesome_snackbar_content
-                //               elevation: 0,
-                //               duration:
-                //                   const Duration(
-                //                       milliseconds:
-                //                           3000),
-                //               behavior:
-                //                   SnackBarBehavior
-                //                       .floating,
-                //               backgroundColor:
-                //                   Colors.transparent,
-                //               content:
-                //                   AwesomeSnackbarContent(
-                //                 title: 'Success!',
-                //                 message: response
-                //                     .toString(),
-                //
-                //                 /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                //                 contentType:
-                //                     ContentType
-                //                         .success,
-                //               ),
-                //             );
-                //             if (!mounted) return;
-                //             ScaffoldMessenger.of(
-                //                 context)
-                //               ..hideCurrentSnackBar()
-                //               ..showSnackBar(
-                //                   snackBar);
-                //             Navigator.pop(
-                //               context,
-                //             );
-                //           } else {
-                //             final snackBar = SnackBar(
-                //               /// need to set following properties for best effect of awesome_snackbar_content
-                //               elevation: 0,
-                //               /*duration: const Duration(
-                // milliseconds: 3000),*/
-                //               behavior:
-                //                   SnackBarBehavior
-                //                       .floating,
-                //               backgroundColor:
-                //                   Colors.transparent,
-                //               content:
-                //                   AwesomeSnackbarContent(
-                //                 title: 'Error!',
-                //                 message:
-                //                     "Something went wrong",
-                //                 contentType:
-                //                     ContentType
-                //                         .failure,
-                //               ),
-                //             );
-                //             if (!mounted) return;
-                //             ScaffoldMessenger.of(
-                //                 context)
-                //               ..hideCurrentSnackBar()
-                //               ..showSnackBar(
-                //                   snackBar);
-                //           }
-                //         },
-                //         child: Container(
-                //           decoration: BoxDecoration(
-                //             color: Colors.red,
-                //             borderRadius:
-                //                 BorderRadius.circular(
-                //                     50.0),
-                //           ),
-                //           child: const Padding(
-                //             padding:
-                //                 EdgeInsets.symmetric(
-                //                     horizontal: 15.0,
-                //                     vertical: 2.0),
-                //             child: Text(
-                //               'Save',
-                //               style: TextStyle(
-                //                 fontSize: 14.0,
-                //                 color: Colors.white,
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
               ),
               actions: const <Widget>[],
             );
           });
         });
   }
+
 }
